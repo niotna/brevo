@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<config xmlns="http://thelia.net/schema/dic/config"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://thelia.net/schema/dic/config http://thelia.net/schema/dic/config/thelia-1.0.xsd">
+
+    <forms>
+        <form name="brevo.configuration" class="Brevo\Form\BrevoConfigurationForm" />
+    </forms>
+
+    <services>
+        <service id="action.brevo.newsletter" class="Brevo\EventListeners\NewsletterListener">
+            <argument type="service" id="thelia.translator" />
+
+            <tag name="kernel.event_subscriber" />
+        </service>
+    </services>
+
+    <hooks>
+        <hook id="brevo.configuration.hook" class="Brevo\Hook\HookManager" scope="request">
+            <tag name="hook.event_listener" event="module.configuration" type="back" method="onModuleConfiguration" />
+        </hook>
+    </hooks>
+</config>

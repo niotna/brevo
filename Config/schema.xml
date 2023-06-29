@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database defaultIdMethod="native" name="TheliaMain">
+    <table name="brevo_newsletter" namespace="Brevo\Model">
+        <column name="id" autoIncrement="true" type="INTEGER" required="true" primaryKey="true" />
+        <column name="brevo_id" type="VARCHAR" size="255" required="true" />
+        <column name="email" type="VARCHAR" size="255" required="true" />
+        <column name="relation_id" type="VARCHAR" size="255" />
+
+        <index name="idx_brevo_newsletter_email">
+            <index-column name="email" />
+        </index>
+        <index name="idx_brevo_newsletter_relation_id">
+            <index-column name="relation_id" />
+        </index>
+
+        <unique name="email_UNIQUE">
+            <unique-column name="email" />
+        </unique>
+        <unique name="relation_id_UNIQUE">
+            <unique-column name="relation_id" />
+        </unique>
+    </table>
+
+    <!--
+    See propel documentation on http://propelorm.org for all information about schema file
+    -->
+    <external-schema filename="local/config/schema.xml" referenceOnly="true" />
+</database>

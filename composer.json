@@ -1,0 +1,16 @@
+{
+  "name": "thelia/brevo-module",
+  "license": "LGPL-3.0+",
+  "type": "thelia-module",
+  "require": {
+    "thelia/installer": "~1.1",
+    "brevo/api-v3-sdk": "8.x.x"
+  }
+  ,
+  "require-dev": {
+    "roave/security-advisories": "dev-latest"
+  },
+  "extra": {
+    "installer-name": "Brevo"
+  }
+}

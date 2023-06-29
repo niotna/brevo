@@ -1,0 +1,31 @@
+<div class="row">
+    <div class="col-md-12 general-block-decorator">
+        <div class="title">
+            {intl d="brevo.bo.default" l="Configure brevo"}
+        </div>
+
+        {if $success|default:false}
+        <div class="alert alert-success">
+            {intl l="Configuration correctly saved" d="brevo.bo.default"}
+        </div>
+    {/if}
+
+    {form name="brevo.configuration"}
+    <form action="{$current_url}" method="post">
+        {include "includes/inner-form-toolbar.html" hide_flags = 1 close_url={url path='/admin/modules'}}
+        <br/>
+
+        {form_field field="success_url"}
+            <input type="hidden" name="{$name}" value="{url path='/admin/modules'}" />
+        {/form_field}
+
+        {form_hidden_fields}
+
+        {render_form_field field="api_key"}
+        {render_form_field field="newsletter_list"}
+        {render_form_field field="exception_on_errors"}
+
+        {include "includes/inner-form-toolbar.html" hide_flags = 1 close_url={url path='/admin/modules'} page_bottom = 1}
+    </form>
+    {/form}
+</div>
