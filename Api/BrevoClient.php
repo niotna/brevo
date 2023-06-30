@@ -40,11 +40,17 @@ class BrevoClient
         $this->contactApi = new ContactsApi(new Client(), $config);
     }
 
+    /**
+     * @throws ApiException
+     */
     public function subscribe(NewsletterEvent $event)
     {
         try {
             $contact = $this->contactApi->getContactInfoWithHttpInfo($event->getEmail());
         } catch (ApiException $apiException) {
+            if ($apiException->getCode() !== 404) {
+                throw $apiException;
+            }
             $createContact = new CreateContact();
             $createContact['email'] = $event->getEmail();
             $createContact['attributes'] = ['PRENOM' => $event->getFirstname(), "NOM" => $event->getLastname()];

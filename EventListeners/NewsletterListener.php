@@ -56,55 +56,61 @@ class NewsletterListener implements EventSubscriberInterface
 
     public function subscribe(NewsletterEvent $event)
     {
-        if (null === BrevoNewsletterQuery::create()->findPk($event->getId())) {
-            $contact = $this->api->subscribe($event);
-            $function = 'registration';
-            $status = $contact[1];
-            $data = ["id"=>$contact[0]["id"]];
+        if (null !== BrevoNewsletterQuery::create()->findPk($event->getId())) {
+            return;
+        }
 
-            if ($this->logAfterAction(
-                sprintf("Email address successfully added for %s '%s'", $function, $event->getEmail()),
-                sprintf(
-                    "The email address %s was refused by brevo for action '%s'",
-                    $event->getEmail(),
-                    $function
-                ),
-                $status,
-                $data
-            )) {
-                $model = BrevoNewsletterQuery::create()->findOneByEmail($event->getEmail()) ?? new BrevoNewsletter();
-                $model
-                    ->setRelationId($data["id"])
-                    ->setEmail($event->getEmail())
-                    ->save();
-            }
+        $contact = $this->api->subscribe($event);
+        $function = 'registration';
+        $status = $contact[1];
+        $data = ["id"=>$contact[0]["id"]];
+        $logMessage = $this->logAfterAction(
+            sprintf("Email address successfully added for %s '%s'", $function, $event->getEmail()),
+            sprintf(
+                "The email address %s was refused by brevo for action '%s'",
+                $event->getEmail(),
+                $function
+            ),
+            $status,
+            $data
+        );
+
+        if ($logMessage) {
+            $model = BrevoNewsletterQuery::create()->findOneByEmail($event->getEmail()) ?? new BrevoNewsletter();
+            $model
+                ->setRelationId($data["id"])
+                ->setEmail($event->getEmail())
+                ->save();
         }
     }
 
     public function update(NewsletterEvent $event)
     {
-        if (null !== BrevoNewsletterQuery::create()->findPk($event->getId()) || null !== NewsletterQuery::create()->findPk($event->getId())) {
-            $contact = $this->api->update($event);
-            $function = 'update';
-            $status = $contact[1];
-            $data = ["id" => $contact[0]["id"]];
+        if (null === BrevoNewsletterQuery::create()->findPk($event->getId()) || null !== NewsletterQuery::create()->findPk($event->getId())) {
+            return;
+        }
 
-            if ($this->logAfterAction(
-                sprintf("Email address successfully added for %s '%s'", $function, $event->getEmail()),
-                sprintf(
-                    "The email address %s was refused by brevo for action '%s'",
-                    $event->getEmail(),
-                    $function
-                ),
-                $status,
-                $data
-            )) {
-                $model = BrevoNewsletterQuery::create()->findOneByEmail($event->getEmail()) ?? new BrevoNewsletter();
-                $model
-                    ->setRelationId($data["id"])
-                    ->setEmail($event->getEmail())
-                    ->save();
-            }
+        $contact = $this->api->update($event);
+        $function = 'update';
+        $status = $contact[1];
+        $data = ["id" => $contact[0]["id"]];
+        $logMessage = $this->logAfterAction(
+            sprintf("Email address successfully added for %s '%s'", $function, $event->getEmail()),
+            sprintf(
+                "The email address %s was refused by brevo for action '%s'",
+                $event->getEmail(),
+                $function
+            ),
+            $status,
+            $data
+        );
+
+        if ($logMessage) {
+            $model = BrevoNewsletterQuery::create()->findOneByEmail($event->getEmail()) ?? new BrevoNewsletter();
+            $model
+                ->setRelationId($data["id"])
+                ->setEmail($event->getEmail())
+                ->save();
         }
     }
 
@@ -118,13 +124,14 @@ class NewsletterListener implements EventSubscriberInterface
             }
 
             $data = ["id" => $model->getRelationId()];
-
-            if ($this->logAfterAction(
+            $logMessage = $this->logAfterAction(
                 sprintf("The email address '%s' was successfully unsubscribed from the list", $event->getEmail()),
                 sprintf("The email address '%s' was not unsubscribed from the list", $event->getEmail()),
                 $status,
                 $data
-            )) {
+            );
+
+            if ($logMessage) {
                 $model
                     ->setRelationId(null)
                     ->save();
